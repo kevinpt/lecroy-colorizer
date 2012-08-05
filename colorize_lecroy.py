@@ -1,8 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Lecroy 93xx colorizer
-# Colorizes black and white screen captures from Lecroy 93xx series oscilloscopes
+'''LeCroy 93xx colorizer
+Colorize black and white screen captures from Lecroy 93xx series
+oscilloscopes'''
 
 # Copyright © 2012 Kevin Thibedeau
 
@@ -32,6 +33,8 @@ import os
 import ast
 
 from optparse import OptionParser
+
+import ConfigParser
 from ConfigParser import SafeConfigParser
 
 import PIL
@@ -40,11 +43,13 @@ from PIL import ImageChops
 from PIL import ImageDraw
 
 # Screen capture dimensions are 832x696
-IMAGE_SIZE = (832,696)
+IMAGE_SIZE = (832, 696)
 
 GRID_ID = 0
 GRID_IMAGE = 1
 GRID_DESCR = 2
+
+VERSION = 1.0
 
 class LecroyColorizer(object):
     '''Colorize screen captures from Lecroy 93xx series oscilloscopes'''
@@ -91,14 +96,13 @@ class LecroyColorizer(object):
         mim = im.convert('1')
         cim = im.copy()
 
-        mask_bg = Image.new('RGB',IMAGE_SIZE,(0,0,0))
+        mask_bg = Image.new('RGB', IMAGE_SIZE, (0,0,0))
 
         # colorize the regions around the perimeter
         m = mask_bg.copy()
         m_drawer = ImageDraw.Draw(m)
         for key, box in self.settings.regions.items():
             m_drawer.rectangle(box, fill=self.settings.colors[key])
-
 
         # identify the grid type
         grid_name = self.identify_grid(im)
@@ -109,9 +113,8 @@ class LecroyColorizer(object):
         if grid_name == 'param':
             m_drawer.rectangle(self.settings.opt_regions['parameters'], fill=self.settings.colors['parameters'])
         elif grid_name[0:2] == 'xy':
-            xy_curs_box = self.settings.opt_regions['xy-cursors']
             m_drawer.rectangle(self.settings.opt_regions['xy-cursors'], fill=self.settings.colors['xy-cursors'])
-
+            
         # find the bottommost grid so we can colorize the strip where the trigger delay marker
         # appears.
         max_y = 0
@@ -119,9 +122,8 @@ class LecroyColorizer(object):
             if box[3] > max_y:
                 max_y = box[3]
 
-        delay_box = (self.settings.regions['left-marker'][0], max_y, self.settings.regions['right-marker'][2],max_y + 25)
+        delay_box = (self.settings.regions['left-marker'][0], max_y, self.settings.regions['right-marker'][2], max_y + 25)
         m_drawer.rectangle(delay_box, fill=self.settings.colors['left-marker'])
-
 
         # colorize the traces
         for box in self.settings.grid_boxes[grid_name]:
@@ -166,34 +168,34 @@ class LecroyColorizer(object):
             
             # isolate the horizontal lines in the grid
             # shift the grid mask left and right
-            sl_grm = ImageChops.offset(gr_mask, -1,0)
-            sr_grm = ImageChops.offset(gr_mask, 1,0)
+            sl_grm = ImageChops.offset(gr_mask, -1, 0)
+            sr_grm = ImageChops.offset(gr_mask, 1, 0)
             
             h_grm = ImageChops.logical_and(ImageChops.add(sr_grm, gr_mask), ImageChops.add(sl_grm, gr_mask))
 
             # isolate the vertical  lines in the grid
             # shift the grid mask up and down
-            su_grm = ImageChops.offset(gr_mask, 0,-1)
-            sd_grm = ImageChops.offset(gr_mask, 0,1)
+            su_grm = ImageChops.offset(gr_mask, 0, -1)
+            sd_grm = ImageChops.offset(gr_mask, 0, 1)
             
             v_grm = ImageChops.logical_and(ImageChops.add(sd_grm, gr_mask), ImageChops.add(su_grm, gr_mask))
 
             # find where a horizontal grid line is bounded by trace pixels above and below
-            su_mim = ImageChops.offset(mim, 0,-1)
-            sd_mim = ImageChops.offset(mim, 0,1)
+            su_mim = ImageChops.offset(mim, 0, -1)
+            sd_mim = ImageChops.offset(mim, 0, 1)
             h_mim = ImageChops.logical_or(su_mim, sd_mim)
-            h_mim = ImageChops.logical_or(h_mim, ImageChops.logical_or(ImageChops.invert(v_grm),h_grm))
+            h_mim = ImageChops.logical_or(h_mim, ImageChops.logical_or(ImageChops.invert(v_grm), h_grm))
 
             # find where a vertical grid line is bounded by trace pixels left and right
-            sl_mim = ImageChops.offset(mim, -1,0)
-            sr_mim = ImageChops.offset(mim, 1,0)
+            sl_mim = ImageChops.offset(mim, -1, 0)
+            sr_mim = ImageChops.offset(mim, 1, 0)
             v_mim = ImageChops.logical_or(sl_mim, sr_mim)
-            v_mim = ImageChops.logical_or(v_mim, ImageChops.logical_or(ImageChops.invert(h_grm),v_grm))
+            v_mim = ImageChops.logical_or(v_mim, ImageChops.logical_or(ImageChops.invert(h_grm), v_grm))
 
             # fill in cross points of horiz. and vert. lines if upper left and lower right corners have
             # pixels from a trace
-            sul_mim = ImageChops.offset(mim, -1,-1)
-            sdr_mim = ImageChops.offset(mim, 1,1)
+            sul_mim = ImageChops.offset(mim, -1, -1)
+            sdr_mim = ImageChops.offset(mim, 1, 1)
             d_mim = ImageChops.logical_or(sul_mim, sdr_mim)
             d_mim = ImageChops.logical_or(d_mim, ImageChops.logical_or(h_grm, v_grm))
             
@@ -248,42 +250,50 @@ class ColorizerSettings(object):
 
         
     def get_settings(self, setting_file):
+        '''Read the settings from a file into a plain dict'''
         parser = SafeConfigParser()
-        parser.read(setting_file)
         
-        settings = {}
-        settings['colors'] = {}
-        if 'colors' in parser.sections():
-            settings['colors'] = dict(parser.items('colors'))
-            
-            # validate the colors
-            for k, v in settings['colors'].items():
-                try:
-                    rgb = PIL.ImageColor.getrgb(v)
-                except ValueError:
-                    print('error: Invalid color format {0} = {1} in file {2}'.format(k, v, setting_file))
-                    sys.exit(-1)
-                else:
-                    settings['colors'][k] = rgb
+        try:
+            parser.read(setting_file)
+        
+            settings = {}
+            settings['colors'] = {}
+            if 'colors' in parser.sections():
+                settings['colors'] = dict(parser.items('colors'))
+                
+                # validate the colors
+                for k, v in settings['colors'].items():
+                    try:
+                        rgb = PIL.ImageColor.getrgb(v)
+                    except ValueError:
+                        print('error: Invalid color format {0} = {1} in file {2}'.format(k, v, setting_file))
+                        sys.exit(-1)
+                    else:
+                        settings['colors'][k] = rgb
 
 
-        for section in ['regions', 'optional regions', 'grids', 'grid boxes', 'grid test points']:
-            settings[section] = {}
-            if section in parser.sections():
-                settings[section] = dict([(k, ast.literal_eval(v)) for k, v in parser.items(section)])
-        
+            for section in ['regions', 'optional regions', 'grids', 'grid boxes', 'grid test points']:
+                settings[section] = {}
+                if section in parser.sections():
+                    settings[section] = dict([(k, ast.literal_eval(v)) for k, v in parser.items(section)])
+
+        except ConfigParser.InterpolationMissingOptionError as e:
+            e.file_name = setting_file
+            raise e
+
+                
         return settings
         
         
 if __name__ == '__main__':
-    print('Lecroy 93xx colorizer\n')
+    print('LeCroy 93xx colorizer ({0})\n'.format(VERSION))
     script_dir = os.path.dirname(os.path.realpath(__file__))
-
+    
     # look up color styles
     color_styles = {}
     style_dir = os.path.join(script_dir, 'styles')
     if os.path.exists(style_dir):
-        color_styles = dict([(os.path.splitext(v)[0],v) for v in os.listdir(style_dir)])
+        color_styles = dict([(os.path.splitext(v)[0], v) for v in os.listdir(style_dir)])
     
     # process arguments
     usage = '''%prog -i input -o output [-s settings] [-r]
@@ -299,7 +309,8 @@ if __name__ == '__main__':
     parser.add_option('-i', dest='in_file', help='input image')
     parser.add_option('-o', dest='out_file', help='output image')
     parser.add_option('-s', '--settings', dest='setting_file', help='settings to control colors and configuration')
-    parser.add_option('-r', '--no-reconstruction', action='store_true', default=False, dest='no_reconstruct', help='disable trace reconstruction over grid')
+    parser.add_option('-r', '--no-reconstruction', action='store_true', default=False, dest='no_reconstruct', \
+        help='disable trace reconstruction over grid')
 
     options, args = parser.parse_args()
 
@@ -338,8 +349,12 @@ if __name__ == '__main__':
         sys.exit(-1)
     
     # get the settings
-    settings = ColorizerSettings(setting_file=options.setting_file, defaults_file=defaults_file, script_dir=script_dir)
-
+    try:
+        settings = ColorizerSettings(setting_file=options.setting_file, defaults_file=defaults_file, \
+            script_dir=script_dir)
+    except ConfigParser.InterpolationMissingOptionError as e:
+        print('error: Unable to parse settings file {0}\n'.format(e.file_name) + e.message)
+        sys.exit(-1)
     
     # colorize the image
     colorizer = LecroyColorizer(settings)
