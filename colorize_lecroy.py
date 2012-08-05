@@ -277,12 +277,24 @@ class ColorizerSettings(object):
         
 if __name__ == '__main__':
     print('Lecroy 93xx colorizer\n')
+    script_dir = os.path.dirname(os.path.realpath(__file__))
 
+    # look up color styles
+    color_styles = {}
+    style_dir = os.path.join(script_dir, 'styles')
+    if os.path.exists(style_dir):
+        color_styles = dict([(os.path.splitext(v)[0],v) for v in os.listdir(style_dir)])
+    
     # process arguments
     usage = '''%prog -i input -o output [-s settings] [-r]
   Any image format suported by the Python Imaging Library is supported
   for input and output.
-  See http://www.pythonware.com/library/pil/handbook/index.htm#appendixes'''
+  See http://www.pythonware.com/library/pil/handbook/index.htm#appendixes
+  
+  The settings can be a text file in ini format or one of the following
+  style names:
+    {0}'''.format(', '.join(sorted(color_styles.keys())))
+
     parser = OptionParser(usage=usage)
     parser.add_option('-i', dest='in_file', help='input image')
     parser.add_option('-o', dest='out_file', help='output image')
@@ -291,6 +303,8 @@ if __name__ == '__main__':
 
     options, args = parser.parse_args()
 
+
+    
     # validate options
     if options.in_file is None:
         print('error: Missing input file\n')
@@ -307,13 +321,17 @@ if __name__ == '__main__':
         parser.print_help()
         sys.exit(-1)
 
-    if not options.setting_file is None and not os.path.exists(options.setting_file):
-        print('error: Settings file ({0}) does not exist.\n'.format(options.setting_file))
-        parser.print_help()
-        sys.exit(-1)
+    if not options.setting_file is None:
+        # check if the argument is a named style
+        if options.setting_file in color_styles:
+            options.setting_file = os.path.join(style_dir, color_styles[options.setting_file])
+
+        if not os.path.exists(options.setting_file):
+            print('error: Settings file ({0}) does not exist.\n'.format(options.setting_file))
+            parser.print_help()
+            sys.exit(-1)
         
     # find the default settings
-    script_dir = os.path.dirname(os.path.realpath(__file__))
     defaults_file = os.path.join(script_dir, 'data', 'default_settings.cfg')
     if not os.path.exists(defaults_file):
         print('error: Unable to find default settings file ({0}).'.format(defaults_file))
