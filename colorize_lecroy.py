@@ -49,7 +49,7 @@ GRID_ID = 0
 GRID_IMAGE = 1
 GRID_DESCR = 2
 
-VERSION = 1.0
+VERSION = 1.0.1
 
 class LecroyColorizer(object):
     '''Colorize screen captures from Lecroy 93xx series oscilloscopes'''

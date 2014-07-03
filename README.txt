@@ -1,5 +1,5 @@
 LeCroy 93xx colorizer
-Version: 1.0
+Version: 1.0.1
 
 Colorize black and white screen captures from Lecroy 93xx series oscilloscopes.
 

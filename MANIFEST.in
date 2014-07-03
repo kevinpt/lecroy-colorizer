@@ -1,0 +1,6 @@
+recursive-include doc *.html *.js *.css *.txt *.gif *.png
+recursive-include data *
+recursive-include styles *
+recursive-include examples *
+include ez_setup.py
+include LICENSE.txt
