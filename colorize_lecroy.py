@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 '''LeCroy 93xx colorizer
@@ -28,6 +28,8 @@ oscilloscopes'''
 
 from __future__ import print_function
 
+__version__ = '1.0.1'
+
 import sys
 import os
 import ast
@@ -48,8 +50,6 @@ IMAGE_SIZE = (832, 696)
 GRID_ID = 0
 GRID_IMAGE = 1
 GRID_DESCR = 2
-
-VERSION = 1.0.1
 
 class LecroyColorizer(object):
     '''Colorize screen captures from Lecroy 93xx series oscilloscopes'''
@@ -93,10 +93,25 @@ class LecroyColorizer(object):
     def colorize(self, in_file, no_reconstruct):
         '''colorize the input image'''
         im = Image.open(in_file).convert('RGB')
+
+        # validate the image to ensure it is from a 93xx scope
+        valid = True
+        if im.size != IMAGE_SIZE: valid = False
+        
+        # the histogram should have all values at 0 and 255 with nothing but 0's in between
+        red_hist = im.histogram()[:256]
+        for color in red_hist[1:255]:
+            if color != 0: valid = False
+            
+        if not valid:
+            raise ValueError, 'Not a proper {0[0]}x{0[1]} black and white image'.format(IMAGE_SIZE)
+
+        # the image is valid... proceed
         mim = im.convert('1')
         cim = im.copy()
 
-        mask_bg = Image.new('RGB', IMAGE_SIZE, (0,0,0))
+
+        mask_bg = Image.new('RGB', IMAGE_SIZE, (0, 0, 0))
 
         # colorize the regions around the perimeter
         m = mask_bg.copy()
@@ -112,6 +127,7 @@ class LecroyColorizer(object):
         # colorize additional regions for special grids
         if grid_name == 'param':
             m_drawer.rectangle(self.settings.opt_regions['parameters'], fill=self.settings.colors['parameters'])
+            m_drawer.rectangle(self.settings.opt_regions['parameters-span'], fill=self.settings.colors['parameters-span'])
         elif grid_name[0:2] == 'xy':
             m_drawer.rectangle(self.settings.opt_regions['xy-cursors'], fill=self.settings.colors['xy-cursors'])
             
@@ -122,14 +138,32 @@ class LecroyColorizer(object):
             if box[3] > max_y:
                 max_y = box[3]
 
-        delay_box = (self.settings.regions['left-marker'][0], max_y, self.settings.regions['right-marker'][2], max_y + 25)
+        if grid_name == 'xy':
+            delay_box_height = 35
+        else:
+            delay_box_height = 25
+        delay_box = (self.settings.regions['left-marker'][0], max_y, self.settings.regions['right-marker'][2], max_y + delay_box_height)
         m_drawer.rectangle(delay_box, fill=self.settings.colors['left-marker'])
 
         # colorize the traces
         for box in self.settings.grid_boxes[grid_name]:
             m_drawer.rectangle(box, fill=self.settings.colors['trace'])
 
+        # find the boxes for the channel labels and the menu buttons
+        channel_boxes, menu_boxes = self._find_boxes(mim)
+            
+        # paint the text for the channel and menu boxes
+        for box in channel_boxes:
+            adj_box = (box[0] + 1, box[1] + 12, box[2] - 1, box[3] - 1)
+            m_drawer.rectangle(adj_box, fill=self.settings.colors['channels-text'])
+
+        for box in menu_boxes:
+            adj_box = (box[0] + 1, box[1] + 12, box[2] - 1, box[3] - 1)
+            m_drawer.rectangle(adj_box, fill=self.settings.colors['menu-text'])
+            
         del m_drawer
+        
+        m.save('regions.png')
 
         # sreeen the colorized regions onto the image
         cim = ImageChops.screen(cim, m)
@@ -142,9 +176,15 @@ class LecroyColorizer(object):
         # add the grid backgrounds
         for box in self.settings.grid_boxes[grid_name]:
             bg_im_drawer.rectangle(box, fill=self.settings.colors['grid-background'])
+
+        # fill the channel and menu box backgrounds
+        for box in channel_boxes:
+            bg_im_drawer.rectangle(box, fill=self.settings.colors['channels-background'])
+        for box in menu_boxes:
+            bg_im_drawer.rectangle(box, fill=self.settings.colors['menu-background']) 
             
         del bg_im_drawer
-
+        
 
         # create the grid mask
         grid_image_file = os.path.join(self.settings.script_dir, 'data', self.settings.grids[grid_name][GRID_IMAGE])
@@ -164,59 +204,103 @@ class LecroyColorizer(object):
 
 
         if not no_reconstruct:
-            # reconstruct the trace portions covered by the grid
-            
-            # isolate the horizontal lines in the grid
-            # shift the grid mask left and right
-            sl_grm = ImageChops.offset(gr_mask, -1, 0)
-            sr_grm = ImageChops.offset(gr_mask, 1, 0)
-            
-            h_grm = ImageChops.logical_and(ImageChops.add(sr_grm, gr_mask), ImageChops.add(sl_grm, gr_mask))
-
-            # isolate the vertical  lines in the grid
-            # shift the grid mask up and down
-            su_grm = ImageChops.offset(gr_mask, 0, -1)
-            sd_grm = ImageChops.offset(gr_mask, 0, 1)
-            
-            v_grm = ImageChops.logical_and(ImageChops.add(sd_grm, gr_mask), ImageChops.add(su_grm, gr_mask))
-
-            # find where a horizontal grid line is bounded by trace pixels above and below
-            su_mim = ImageChops.offset(mim, 0, -1)
-            sd_mim = ImageChops.offset(mim, 0, 1)
-            h_mim = ImageChops.logical_or(su_mim, sd_mim)
-            h_mim = ImageChops.logical_or(h_mim, ImageChops.logical_or(ImageChops.invert(v_grm), h_grm))
-
-            # find where a vertical grid line is bounded by trace pixels left and right
-            sl_mim = ImageChops.offset(mim, -1, 0)
-            sr_mim = ImageChops.offset(mim, 1, 0)
-            v_mim = ImageChops.logical_or(sl_mim, sr_mim)
-            v_mim = ImageChops.logical_or(v_mim, ImageChops.logical_or(ImageChops.invert(h_grm), v_grm))
-
-            # fill in cross points of horiz. and vert. lines if upper left and lower right corners have
-            # pixels from a trace
-            sul_mim = ImageChops.offset(mim, -1, -1)
-            sdr_mim = ImageChops.offset(mim, 1, 1)
-            d_mim = ImageChops.logical_or(sul_mim, sdr_mim)
-            d_mim = ImageChops.logical_or(d_mim, ImageChops.logical_or(h_grm, v_grm))
-            
-            recon = ImageChops.logical_and(h_mim, v_mim)
-            recon = ImageChops.logical_and(recon, d_mim)
-
-            # mask out the grid borders from the reconstruction
-            m = Image.new('1', IMAGE_SIZE, 1)
-            m_drawer = ImageDraw.Draw(m)
-            for box in self.settings.grid_boxes[grid_name]:
-                m_drawer.rectangle(box, 0)
-            del m_drawer
-            
-            recon = ImageChops.logical_or(recon, m)
-            
-            # composite the reconstructed trac segments onto the colorized image
-            ol_color = Image.new('RGB', IMAGE_SIZE, self.settings.colors['trace-reconstruction'])
-            cim = ImageChops.composite(cim, ol_color, recon)
+            cim = self._reconstruct_trace(cim, gr_mask, mim, grid_name)
 
         return cim
+        
+    def _find_boxes(self, mim):
+        '''Scan down a 1-pixel wide column to find the channel and menu box regions'''
+        channel_box_column = self.settings.box_detection['channel-box-column']
+        menu_box_column = self.settings.box_detection['menu-box-column']
+        
+        # extract 1-pixel wide column from mask image
+        channel_box_data = list(mim.crop(channel_box_column).getdata())
+        channel_box_edges = self._find_box_edges(channel_box_data, channel_box_column[1])
+        channel_boxes = []
+        for edge in channel_box_edges:
+            box = (channel_box_column[0] + 1, edge[0], channel_box_column[0] + 126, edge[1])
+            channel_boxes.append(box)
 
+        menu_box_data = list(mim.crop(menu_box_column).getdata())
+        menu_box_edges = self._find_box_edges(menu_box_data, menu_box_column[1])
+        menu_boxes = []
+        for edge in menu_box_edges:
+            box = (menu_box_column[0] + 1, edge[0], menu_box_column[0] + 136, edge[1])
+            menu_boxes.append(box)
+        
+        return (channel_boxes, menu_boxes)
+
+            
+    def _find_box_edges(self, column_data, y_offset):
+        '''Search a column for continuous spans of dark pixels signifying the edge of a box'''
+        box_edges = []
+        in_box = False
+        box_start = 0
+        for i in range(len(column_data)):
+            if column_data[i] == 0 and not in_box:
+                box_start = i
+                in_box = True
+            elif column_data[i] > 0 and in_box:
+                # the XY grid cursors have pixels in the same column we're testing for channel box edges
+                # remove any edge that is too short to be a real box
+                if i - box_start > 20: # must be more than 20-pixels tall
+                    box_edges.append((box_start + y_offset - 1, i + y_offset))
+                in_box = False
+        return box_edges
+        
+    def _reconstruct_trace(self, cim, gr_mask, mim, grid_name):
+        '''Reconstruct the trace portions covered by the grid'''
+        
+        # isolate the horizontal lines in the grid
+        # shift the grid mask left and right
+        sl_grm = ImageChops.offset(gr_mask, -1, 0)
+        sr_grm = ImageChops.offset(gr_mask, 1, 0)
+        
+        h_grm = ImageChops.logical_and(ImageChops.add(sr_grm, gr_mask), ImageChops.add(sl_grm, gr_mask))
+
+        # isolate the vertical  lines in the grid
+        # shift the grid mask up and down
+        su_grm = ImageChops.offset(gr_mask, 0, -1)
+        sd_grm = ImageChops.offset(gr_mask, 0, 1)
+        
+        v_grm = ImageChops.logical_and(ImageChops.add(sd_grm, gr_mask), ImageChops.add(su_grm, gr_mask))
+
+        # find where a horizontal grid line is bounded by trace pixels above and below
+        su_mim = ImageChops.offset(mim, 0, -1)
+        sd_mim = ImageChops.offset(mim, 0, 1)
+        h_mim = ImageChops.logical_or(su_mim, sd_mim)
+        h_mim = ImageChops.logical_or(h_mim, ImageChops.logical_or(ImageChops.invert(v_grm), h_grm))
+
+        # find where a vertical grid line is bounded by trace pixels left and right
+        sl_mim = ImageChops.offset(mim, -1, 0)
+        sr_mim = ImageChops.offset(mim, 1, 0)
+        v_mim = ImageChops.logical_or(sl_mim, sr_mim)
+        v_mim = ImageChops.logical_or(v_mim, ImageChops.logical_or(ImageChops.invert(h_grm), v_grm))
+
+        # fill in cross points of horiz. and vert. lines if upper left and lower right corners have
+        # pixels from a trace
+        sul_mim = ImageChops.offset(mim, -1, -1)
+        sdr_mim = ImageChops.offset(mim, 1, 1)
+        d_mim = ImageChops.logical_or(sul_mim, sdr_mim)
+        d_mim = ImageChops.logical_or(d_mim, ImageChops.logical_or(h_grm, v_grm))
+        
+        recon = ImageChops.logical_and(h_mim, v_mim)
+        recon = ImageChops.logical_and(recon, d_mim)
+
+        # mask out the grid borders from the reconstruction
+        m = Image.new('1', IMAGE_SIZE, 1)
+        m_drawer = ImageDraw.Draw(m)
+        for box in self.settings.grid_boxes[grid_name]:
+            m_drawer.rectangle(box, 0)
+        del m_drawer
+        
+        recon = ImageChops.logical_or(recon, m)
+        
+        # composite the reconstructed trac segments onto the colorized image
+        ol_color = Image.new('RGB', IMAGE_SIZE, self.settings.colors['trace-reconstruction'])
+        new_cim = ImageChops.composite(cim, ol_color, recon)
+        
+        return new_cim
     
 class ColorizerSettings(object):
     '''process the option settings files'''
@@ -226,6 +310,7 @@ class ColorizerSettings(object):
         self.colors = {}
         self.regions = {}
         self.opt_regions = {}
+        self.box_detection = {}
         self.grids = {}
         self.grid_boxes = {}
         self.grid_test_points = {}
@@ -235,6 +320,7 @@ class ColorizerSettings(object):
             self.colors = default_settings['colors']
             self.regions = default_settings['regions']
             self.opt_regions = default_settings['optional regions']
+            self.box_detection = default_settings['box detection']
             self.grids = default_settings['grids']
             self.grid_boxes = default_settings['grid boxes']
             self.grid_test_points = default_settings['grid test points']
@@ -244,6 +330,7 @@ class ColorizerSettings(object):
             if 'colors' in settings: self.colors.update(settings['colors'])
             if 'regions' in settings: self.regions.update(settings['regions'])
             if 'optional regions' in settings: self.opt_regions.update(settings['optional regions'])
+            if 'box detection' in settings: self.box_detection.update(settings['box detection'])
             if 'grids' in settings: self.grids.update(settings['grids'])
             if 'grid boxes' in settings: self.grids.update(settings['grid boxes'])
             if 'grid test points' in settings: self.grids.update(settings['grid test points'])
@@ -272,21 +359,32 @@ class ColorizerSettings(object):
                         settings['colors'][k] = rgb
 
 
-            for section in ['regions', 'optional regions', 'grids', 'grid boxes', 'grid test points']:
+            for section in ['regions', 'optional regions', 'box detection', 'grids', 'grid boxes', 'grid test points']:
                 settings[section] = {}
                 if section in parser.sections():
-                    settings[section] = dict([(k, ast.literal_eval(v)) for k, v in parser.items(section)])
+                    try:
+                        settings[section] = dict([(k, ast.literal_eval(v)) for k, v in parser.items(section)])
+                    except ValueError:
+                        raise ValueError, 'Unable to parse setting value in [{0}] section'.format(section)
+
 
         except ConfigParser.InterpolationMissingOptionError as e:
+            e.file_name = setting_file
+            raise e
+        except ConfigParser.ParsingError as e:
+            e.file_name = setting_file
+            raise e
+        except SyntaxError as e:
             e.file_name = setting_file
             raise e
 
                 
         return settings
         
-        
-if __name__ == '__main__':
-    print('LeCroy 93xx colorizer ({0})\n'.format(VERSION))
+
+def main():
+    '''Entry point for colorizer script'''
+    print('LeCroy 93xx colorizer {0}\n'.format(__version__))
     script_dir = os.path.dirname(os.path.realpath(__file__))
     
     # look up color styles
@@ -296,7 +394,7 @@ if __name__ == '__main__':
         color_styles = dict([(os.path.splitext(v)[0], v) for v in os.listdir(style_dir)])
     
     # process arguments
-    usage = '''%prog -i input -o output [-s settings] [-r]
+    usage = '''%prog -i input [-o output] [-s settings] [-r]
   Any image format suported by the Python Imaging Library is supported
   for input and output.
   See http://www.pythonware.com/library/pil/handbook/index.htm#appendixes
@@ -328,9 +426,13 @@ if __name__ == '__main__':
         sys.exit(-1)
 
     if options.out_file is None:
-        print('error: Missing output file\n')
-        parser.print_help()
-        sys.exit(-1)
+        # make the output file from the input name
+        path, in_file = os.path.split(options.in_file)
+        # we will prefer png output to minimize file size since PIL doesn't support RLE
+        # for bitmaps.
+        out_file = os.path.splitext('color_' + in_file)[0] + '.png'
+        options.out_file = os.path.join(path, out_file)
+
 
     if not options.setting_file is None:
         # check if the argument is a named style
@@ -355,6 +457,17 @@ if __name__ == '__main__':
     except ConfigParser.InterpolationMissingOptionError as e:
         print('error: Unable to parse settings file {0}\n'.format(e.file_name) + e.message)
         sys.exit(-1)
+    except ConfigParser.ParsingError as e:
+        print('error: Unable to parse settings file {0}\n'.format(e.file_name) + e.message)
+        sys.exit(-1)
+    except ValueError as e:
+        print('error: ' + e.message)
+        sys.exit(-1)
+    except SyntaxError as e:
+        print('error: ' + e.msg + ' in file ' + e.file_name)
+        print('    ' + e.text)
+        print('    ' + ' ' * (e.offset-1) + '^')
+        sys.exit(-1)
     
     # colorize the image
     colorizer = LecroyColorizer(settings)
@@ -370,5 +483,15 @@ if __name__ == '__main__':
     print('  Grid type:', settings.grids[grid_name][GRID_DESCR])
 
     print('  Saving colorized image:', options.out_file)
-    color_im.save(options.out_file)
+    
+    try:
+        color_im.save(options.out_file)
+    except IOError:
+        print('error: Unable to write to file {0}'.format(options.out_file))
+        sys.exit(-1)
+        
     sys.exit(0)
+
+if __name__ == '__main__':
+    main()
+
