@@ -28,7 +28,7 @@ oscilloscopes'''
 
 from __future__ import print_function
 
-__version__ = '1.0.1'
+__version__ = '1.1'
 
 import sys
 import os

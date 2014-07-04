@@ -2,7 +2,7 @@
 LeCroy 93xx colorizer
 =====================
 
-Version: 1.0.1
+Version: 1.1
 
 LeCroy Colorizer is a command line utility to add color to the black and white
 images produced by the screen capture on the LeCroy 93xx series oscilloscopes.
