@@ -2,16 +2,17 @@
 LeCroy 93xx colorizer
 =====================
 
-Version: 1.1
+Version: 1.2
 
 LeCroy Colorizer is a command line utility to add color to the black and white
 images produced by the screen capture on the LeCroy 93xx series oscilloscopes.
-It should run without issue on all platforms that support Python and PIL.
 
-Dependencies
+Requirements
 ------------
-* Python 2.6 or newer. Not tested under Python 3 due to lack of PIL support
+* Python 2.6 or newer
 * `Python Imaging Library (PIL) <http://www.pythonware.com/products/pil>`_
+
+The installation script depends on setuptools which will be installed if it isn't currently present in your Python distribution. PIL is not available for Python 3.x.
 
 Features
 --------
@@ -22,9 +23,7 @@ Features
 
 Installation
 ------------
-For all platforms, installation via setup.py is provided. This uses the
-Distribute fork of setuptools and will install Distribute if it is not already
-present. After extracting the compressed archive, run the following command:
+For all platforms, installation via setup.py is provided. After extracting the compressed archive, run the following command:
 
 ``> python setup.py install``
 
@@ -40,8 +39,8 @@ misbehaves slightly by printing "Aborted" when the program ends.
 For Windows users there is a binary installer available as well.
 
 	
-Running
--------
+Using LeCroy Colorizer
+----------------------
 The simplest way to run the colorizer is to supply the input file name:
 
 ``> colorize_lecroy -i <input>``
@@ -61,8 +60,6 @@ analog
   A teal scheme that mimics a monochromatic analog scope display
 gray
   A grayscale image
-gray_nomenu
-  Grayscale with the menu blanked
 light
   A light colored image suitable for color printed output
 waverunner
@@ -79,6 +76,17 @@ reconstruction is achieved through Boolean operations on the original image. It
 is mostly accurate but can produce small artifacts. The ``-r`` option is used to
 disable the reconstruction and show the grids overlaid on top of the traces.
 
+Hiding regions
+~~~~~~~~~~~~~~
+The ``--hide`` option is used to supply a list of region names that will be hidden.
+Multiple regions can be specified by separating them with a comma:
+
+``> colorize_lecroy -i foo.bmp -s analog --hide=menu,time,trig-mode``
+
+Any region defined in a style file can be hidden. They are treated as case insensitive
+names so it is not necessary to observe the same capitalization scheme. As special cases,
+the menu and channels regions also cause the associated *-text and *-background regions
+to be hidden as well.
 
 Capturing A Screen Image
 ------------------------

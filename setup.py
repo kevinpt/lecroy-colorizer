@@ -34,7 +34,7 @@ setup(name='lecroy-colorizer',
         'console_scripts': ['colorize_lecroy = colorize_lecroy:main']
     },
     include_package_data = True,
-    
+
     keywords='LeCroy oscilloscope',
     license='MIT',
     classifiers=['Development Status :: 5 - Production/Stable',
