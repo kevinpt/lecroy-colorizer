@@ -1,0 +1,12 @@
+===========================
+lecroy-colorizer change log
+===========================
+
+v1.2 / 2014-7-29
+=================
+
+  Changes
+  -------
+  * Add --hide and --color options
+  * Removed unneeded gray_nomenu style
+

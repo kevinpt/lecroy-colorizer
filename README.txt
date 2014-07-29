@@ -88,6 +88,17 @@ names so it is not necessary to observe the same capitalization scheme. As speci
 the menu and channels regions also cause the associated *-text and *-background regions
 to be hidden as well.
 
+Overriding colors
+~~~~~~~~~~~~~~~~~
+The `--color` option is used to supply a list of colors that will override those from the currently active style. This allows you to make color modifications without needing to create a new style definition. The argument is supplied as a comma separated list of `<name>:<color>` pairs where `<name>` is a defined region and `<color>` is one of the supported color specifiers.
+
+Example
+~~~~~~~
+Consider that you want to prepare two screen captures for publication using the "light" style. To distinguish the images it would help to change the color of the traces. To remove visual clutter the menu and trigger mode will be hidden. Use the following to accomplish this goal:
+
+> colorize_lecroy -i wave1.bmp -s light --hide=menu,trig-mode
+> colorize_lecroy -i wave2.bmp -s light --hide=menu,trig-mode --color=trace:green,channels:green
+
 Capturing A Screen Image
 ------------------------
 The 93xx series scopes provide a wide range of methods for saving data. The
