@@ -3,7 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-LeCroy 93xx colorizer
+=====================
+LeCroy 93xx Colorizer
 =====================
 
 LeCroy Colorizer is a command line utility to add color to the black and white

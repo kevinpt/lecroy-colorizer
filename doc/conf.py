@@ -103,7 +103,7 @@ html_theme_options = {
   'logo_text_align': 'center',
   'font_family': 'Verdana, Geneva, sans-serif',
   'github_user': 'kevinpt',
-  'github_repo': 'lecroy_colorizer',
+  'github_repo': 'lecroy-colorizer',
   'github_button': True
 }
 
