@@ -15,6 +15,12 @@ Features
 * Provides user customizable colors
 * Supports a wide variety of input and output image formats
 
+=======================================  =======================================
+Original                                 Colorized
+=======================================  =======================================
+.. image:: images/example_single.png     .. image:: images/color_single.png
+=======================================  =======================================
+
 Requirements
 ------------
 * Python 2.6 or newer. Not tested under Python 3 due to lack of PIL support

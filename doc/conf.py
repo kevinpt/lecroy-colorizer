@@ -98,7 +98,7 @@ html_theme = 'alabaster'
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-  'description': 'LeCroy Colorizer',
+  'description': 'Oscilloscope screencap colorizer',
   'show_powered_by': False,
   'logo_text_align': 'center',
   'font_family': 'Verdana, Geneva, sans-serif',
