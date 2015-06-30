@@ -12,6 +12,8 @@ Variables
 ---------
 You can define keys to be used as variables substituted in the values for other keys. A variable is substituted by referencing it with ``%(variable-name)s``. Variables must appear in the same section where they will be referenced for substitution.
 
+.. _colors:
+
 Colors
 ------
 
@@ -41,6 +43,8 @@ Trace                   Signal traces
 Trace-Reconstruction    Color used for reconstructed trace segments that cross the grid lines
 ======================  =====================================================================
 
+.. _region colors:
+
 Region colors
 ~~~~~~~~~~~~~
 These are the colors for the regions in each image.
@@ -65,23 +69,20 @@ Sample-Rate          Sample rate in lower right corner
 Trig-Mode            Trigger mode
 ===================  =========================
 
-|
-
 .. image:: images/regions_single.png
 
 Special mode colors
 ~~~~~~~~~~~~~~~~~~~
 The Parameter measurement and XY modes have special layouts with additional data readout regions. When one of these grid modes is detected in a captured image these color settings become active.
 
-===============  ============
+===============  ===================================================================
 Key              Description
-===============  ============
+===============  ===================================================================
 Parameters       Parameter values in parameter grid mode
 Parameters-Span  Bar over top of parameter mode grid showing span for measurements
 XY-Cursors       XY cursor values in top left of XY grid modes
-===============  ============
+===============  ===================================================================
 
-|
 
 ===================================  ================================
 .. image:: images/regions_param.png  .. image:: images/regions_xy.png
