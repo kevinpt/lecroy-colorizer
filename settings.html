@@ -1,0 +1,298 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Using settings files &mdash; LeCroy Colorizer 1.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/project.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="LeCroy Colorizer 1.2 documentation" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">LeCroy Colorizer 1.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="using-settings-files">
+<h1>Using settings files<a class="headerlink" href="#using-settings-files" title="Permalink to this headline">¶</a></h1>
+<p>The colorizer accepts user defined settings when a file is passed with the <tt class="docutils literal"><span class="pre">-s</span></tt> switch. This file is a simple Windows ini style format consisting of various sections to define colors and geometry data for the colored regions.</p>
+<p>The distribution for the colorizer comes with a set of predefined styles in &#8216;styles&#8217; directory that define custom color settings. In most cases this is all you will want to change for a custom settings file and you can copy one of these styles to start out with an initial template. Once you have a completed settings file that you like you can optionally place it in the &#8216;styles&#8217; directory to access it by logical name if desired.</p>
+<p>Each settings file consists of a series of named sections marked in square brackets. Each section contains a series of key = value pairs, one per line. Any omitted keys will take their value from the defaults defined in default_settings.cfg. The keys are case insensitive.</p>
+<div class="section" id="variables">
+<h2>Variables<a class="headerlink" href="#variables" title="Permalink to this headline">¶</a></h2>
+<p>You can define keys to be used as variables substituted in the values for other keys. A variable is substituted by referencing it with <tt class="docutils literal"><span class="pre">%(variable-name)s</span></tt>. Variables must appear in the same section where they will be referenced for substitution.</p>
+</div>
+<div class="section" id="colors">
+<span id="id1"></span><h2>Colors<a class="headerlink" href="#colors" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">&quot;[colors]&quot;</span></tt> section contains all of the color definitions for a color style. The color keys correspond to defined regions in the master default_settings.cfg file plus a few special colors for backgrounds and certain grid modes.</p>
+<p>You can use a variety of formats for specifying a color:</p>
+<ul>
+<li><dl class="first docutils">
+<dt>Hex format, #rgb or #rrggbb</dt>
+<dd><p class="first last">ex:  #fff, #00ff00</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>rgb(red, green, blue) using integers from 0-255 or percentages</dt>
+<dd><p class="first last">ex:  rgb(0,12,200), rgb(100%, 50%, 25%)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>hsl(hue, saturation%, lightness%)</dt>
+<dd><p class="first last">ex:  hsl(0, 100%, 25%)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><a class="reference external" href="http://en.wikipedia.org/wiki/Web_colors#HTML_color_names">HTML and X11 color names</a></dt>
+<dd><p class="first last">ex:  Red, red, blue, SlateGray</p>
+</dd>
+</dl>
+</li>
+</ul>
+<div class="section" id="general-colors">
+<h3>General colors<a class="headerlink" href="#general-colors" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="76%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Key</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Background</td>
+<td>Overall background color</td>
+</tr>
+<tr class="row-odd"><td>Grid-Background</td>
+<td>Background of grids</td>
+</tr>
+<tr class="row-even"><td>Grid</td>
+<td>Grid lines</td>
+</tr>
+<tr class="row-odd"><td>Trace</td>
+<td>Signal traces</td>
+</tr>
+<tr class="row-even"><td>Trace-Reconstruction</td>
+<td>Color used for reconstructed trace segments that cross the grid lines</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="region-colors">
+<span id="id2"></span><h3>Region colors<a class="headerlink" href="#region-colors" title="Permalink to this headline">¶</a></h3>
+<p>These are the colors for the regions in each image.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="78%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Key</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Time</td>
+<td>Time in upper left corner</td>
+</tr>
+<tr class="row-odd"><td>Channels</td>
+<td>Channel list on left side</td>
+</tr>
+<tr class="row-even"><td>Channels-Text</td>
+<td>Color for text inside channel list boxes</td>
+</tr>
+<tr class="row-odd"><td>Channels-Background</td>
+<td>Background fill for boxes in channel list</td>
+</tr>
+<tr class="row-even"><td>Timebase</td>
+<td>Timebase in lower left side</td>
+</tr>
+<tr class="row-odd"><td>Probes</td>
+<td>Probe voltage and coupling in lower left corner</td>
+</tr>
+<tr class="row-even"><td>Left-Marker</td>
+<td>Trigger level and trigger delay markers on left and bottom of grid</td>
+</tr>
+<tr class="row-odd"><td>Right-Marker</td>
+<td>Trigger level and trace offset markers on right of grid</td>
+</tr>
+<tr class="row-even"><td>Cursors</td>
+<td>Cursor readout on bottom</td>
+</tr>
+<tr class="row-odd"><td>Trigger</td>
+<td>Trigger mode and settings on bottom</td>
+</tr>
+<tr class="row-even"><td>Menu</td>
+<td>Menus on right side</td>
+</tr>
+<tr class="row-odd"><td>Menu-Text</td>
+<td>Color for text inside menu list boxes</td>
+</tr>
+<tr class="row-even"><td>Menu-Background</td>
+<td>Background fill for boxes in menu list</td>
+</tr>
+<tr class="row-odd"><td>Sample-Rate</td>
+<td>Sample rate in lower right corner</td>
+</tr>
+<tr class="row-even"><td>Trig-Mode</td>
+<td>Trigger mode</td>
+</tr>
+</tbody>
+</table>
+<img alt="_images/regions_single.png" src="_images/regions_single.png" />
+</div>
+<div class="section" id="special-mode-colors">
+<h3>Special mode colors<a class="headerlink" href="#special-mode-colors" title="Permalink to this headline">¶</a></h3>
+<p>The Parameter measurement and XY modes have special layouts with additional data readout regions. When one of these grid modes is detected in a captured image these color settings become active.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="82%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Key</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Parameters</td>
+<td>Parameter values in parameter grid mode</td>
+</tr>
+<tr class="row-odd"><td>Parameters-Span</td>
+<td>Bar over top of parameter mode grid showing span for measurements</td>
+</tr>
+<tr class="row-even"><td>XY-Cursors</td>
+<td>XY cursor values in top left of XY grid modes</td>
+</tr>
+</tbody>
+</table>
+<table border="1" class="docutils">
+<colgroup>
+<col width="52%" />
+<col width="48%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><img alt="_images/regions_param.png" class="first last" src="_images/regions_param.png" />
+</td>
+<td><img alt="_images/regions_xy.png" class="first last" src="_images/regions_xy.png" />
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/lecroy_colorizer_logo.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="index.html">LeCroy Colorizer</a></h1>
+
+
+
+<p class="blurb">LeCroy Colorizer</p>
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=kevinpt&repo=lecroy_colorizer&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Using settings files</a><ul>
+<li><a class="reference internal" href="#variables">Variables</a></li>
+<li><a class="reference internal" href="#colors">Colors</a><ul>
+<li><a class="reference internal" href="#general-colors">General colors</a></li>
+<li><a class="reference internal" href="#region-colors">Region colors</a></li>
+<li><a class="reference internal" href="#special-mode-colors">Special mode colors</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3>Other projects</h3>
+<p>
+<a href="http://kevinpt.github.io/opbasm/">opbasm</a><br>
+<a href="http://code.google.com/p/ripyl">ripyl</a><br>
+<a href="http://code.google.com/p/vertcl">vertcl</a><br>
+<a href="http://code.google.com/p/vhdl-extras">vhdl-extras</a><br>
+<a href="http://kevinpt.github.io/lecroy-colorizer">lecroy-colorizer</a>
+</p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Kevin Thibedeau.
+      
+      |
+      <a href="_sources/settings.txt"
+          rel="nofollow">Page source</a></li>
+    </div>
+
+    
+
+    
+  </body>
+</html>

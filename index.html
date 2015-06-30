@@ -1,0 +1,299 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>LeCroy 93xx colorizer &mdash; LeCroy Colorizer 1.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/project.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="LeCroy Colorizer 1.2 documentation" href="#" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="#">LeCroy Colorizer 1.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="lecroy-93xx-colorizer">
+<h1>LeCroy 93xx colorizer<a class="headerlink" href="#lecroy-93xx-colorizer" title="Permalink to this headline">¶</a></h1>
+<p>LeCroy Colorizer is a command line utility to add color to the black and white
+images produced by the screen capture on the LeCroy 93xx series oscilloscopes.
+It should run without issue on all platforms that support Python and PIL.</p>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Colorize all portions of a 93xx series screen capture</li>
+<li>Automatically detects grid layout</li>
+<li>Provides user customizable colors</li>
+<li>Supports a wide variety of input and output image formats</li>
+</ul>
+</div>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Python 2.6 or newer. Not tested under Python 3 due to lack of PIL support</li>
+<li><a class="reference external" href="http://www.pythonware.com/products/pil">Python Imaging Library (PIL)</a></li>
+</ul>
+<p>The installation script depends on setuptools which will be installed if it isn&#8217;t currently present in your Python distribution.</p>
+</div>
+<div class="section" id="download">
+<h2>Download<a class="headerlink" href="#download" title="Permalink to this headline">¶</a></h2>
+<p>You can access the lecroy-colorizer Git repository from <a class="reference external" href="https://github.com/kevinpt/lecroy-colorizer">Github</a>. <a class="reference external" href="https://drive.google.com/folderview?id=0B5jin2146-EXQ1pYOGpTSDF6NGs&amp;usp=sharing">Packaged source code</a> is also available for download.</p>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>For all platforms, installation via setup.py is provided. After extracting the compressed archive, run the following command:</p>
+<div class="highlight-python"><div class="highlight"><pre>&gt; python setup.py install
+</pre></div>
+</div>
+<p>This will install the lecroy-colorizer distribution (and PIL if necessary) into
+your Python&#8217;s site-packages and create an executable link to the colorize_lecroy
+script.</p>
+<p>The LeCroy colorizer has been tested on Python 2.6 and 2.7 using native
+Windows and the Cygwin environment. It should run without issues on any POSIX
+platform. As of 2012/8/5 The PIL installed with Cygwin&#8217;s Python 2.6
+misbehaves slightly by printing &#8220;Aborted&#8221; when the program ends.</p>
+</div>
+<div class="section" id="using-lecroy-colorizer">
+<h2>Using LeCroy Colorizer<a class="headerlink" href="#using-lecroy-colorizer" title="Permalink to this headline">¶</a></h2>
+<p>The simplest way to run the colorizer is to supply the input file name:</p>
+<div class="highlight-python"><div class="highlight"><pre>&gt; colorize_lecroy -i &lt;input&gt;
+</pre></div>
+</div>
+<p>This will produce a color output image named <tt class="docutils literal"><span class="pre">color_&lt;input&gt;.png</span></tt> using the default color style.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Original</th>
+<th class="head">Colorized</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><img alt="_images/example_single.png" class="first last" src="_images/example_single.png" />
+</td>
+<td><img alt="_images/color_single.png" class="first last" src="_images/color_single.png" />
+</td>
+</tr>
+</tbody>
+</table>
+<p>If you want to control the output file name and format, specify it with the <tt class="docutils literal"><span class="pre">-o</span> <span class="pre">&lt;output&gt;</span></tt> switch.</p>
+<p>You can use alternate predefined color styles or supply your own color definitions in a settings file passed with the <tt class="docutils literal"><span class="pre">-s</span></tt> switch:</p>
+<div class="highlight-python"><div class="highlight"><pre>&gt; colorize_lecroy -i captured_image.bmp -o colorized_image.png -s my_colors.cfg
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="settings.html"><em>Using settings files</em></a> for more information on how to define your own styles.</p>
+<p>The predefined color styles are:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>93xx</td>
+<td>analog</td>
+</tr>
+<tr class="row-even"><td><img alt="_images/style_93xx.png" class="first last" src="_images/style_93xx.png" />
+</td>
+<td><img alt="_images/style_analog.png" class="first last" src="_images/style_analog.png" />
+</td>
+</tr>
+<tr class="row-odd"><td>gray</td>
+<td>gray &#8211;hide=menu</td>
+</tr>
+<tr class="row-even"><td><img alt="_images/style_gray.png" class="first last" src="_images/style_gray.png" />
+</td>
+<td><img alt="_images/style_gray_nomenu.png" class="first last" src="_images/style_gray_nomenu.png" />
+</td>
+</tr>
+<tr class="row-odd"><td>light</td>
+<td>waverunner</td>
+</tr>
+<tr class="row-even"><td><img alt="_images/style_light.png" class="first last" src="_images/style_light.png" />
+</td>
+<td><img alt="_images/style_waverunner.png" class="first last" src="_images/style_waverunner.png" />
+</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="trace-reconstruction">
+<h3>Trace Reconstruction<a class="headerlink" href="#trace-reconstruction" title="Permalink to this headline">¶</a></h3>
+<p>The black and white images produced by a screen dump on the scope don&#8217;t
+distinguish the grid lines and traces. By default the colorizer attempts to
+reconstruct the portions of the traces that cross the grid lines. These can be
+colored independently using the &#8220;Trace-Reconstruction&#8221; color. The
+reconstruction is achieved through Boolean operations on the original image. It
+is mostly accurate but can produce small artifacts. The <tt class="docutils literal"><span class="pre">-r</span></tt> option is used to
+disable the reconstruction and show the grids overlaid on top of the traces.</p>
+</div>
+<div class="section" id="hiding-regions">
+<h3>Hiding regions<a class="headerlink" href="#hiding-regions" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">--hide</span></tt> option is used to supply a list of region names that will be hidden.
+Multiple regions can be specified by separating them with a comma:</p>
+<div class="highlight-python"><div class="highlight"><pre>&gt; colorize_lecroy -i foo.bmp -s analog --hide=menu,time,trig-mode
+</pre></div>
+</div>
+<p>Any region defined in a style file can be hidden. They are treated as case insensitive
+names so it is not necessary to observe the same capitalization scheme. As special cases,
+the <tt class="docutils literal"><span class="pre">menu</span></tt> and <tt class="docutils literal"><span class="pre">channels</span></tt> regions also cause the associated <tt class="docutils literal"><span class="pre">*</span></tt>-text and <tt class="docutils literal"><span class="pre">*</span></tt>-background regions to be hidden as well. The available regions are the same as those listed in the <a class="reference internal" href="settings.html#region-colors"><em>region colors</em></a> section.</p>
+</div>
+<div class="section" id="overriding-colors">
+<h3>Overriding colors<a class="headerlink" href="#overriding-colors" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">--color</span></tt> option is used to supply a list of colors that will override those from the currently active style. This allows you to make color modifications without needing to create a new style definition. The argument is supplied as a comma separated list of <tt class="docutils literal"><span class="pre">&lt;name&gt;:&lt;color&gt;</span></tt> pairs where <tt class="docutils literal"><span class="pre">&lt;name&gt;</span></tt> is a defined region and <tt class="docutils literal"><span class="pre">&lt;color&gt;</span></tt> is one of the supported <a class="reference internal" href="settings.html#colors"><em>color specifiers</em></a>.</p>
+<p>Simulating a transparent grid overlay:</p>
+<div class="highlight-python"><div class="highlight"><pre>&gt; colorize_lecroy -i foo.bmp --color=&quot;grid:#333,trace:hsl(30,100%,50%),trace-reconstruction:hsl(30,80%,40%)&quot;
+</pre></div>
+</div>
+<img alt="_images/color_override_sm.png" src="_images/color_override_sm.png" />
+</div>
+<div class="section" id="example">
+<h3>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h3>
+<p>Consider that you want to prepare two screen captures for publication using the &#8220;light&#8221; style. To distinguish the images it would help to change the color of the traces. To remove visual clutter the menu and trigger mode will be hidden. Use the following to accomplish this goal:</p>
+<div class="highlight-python"><div class="highlight"><pre>&gt; colorize_lecroy -i wave1.bmp -s light --hide=menu,trig-mode
+&gt; colorize_lecroy -i wave2.bmp -s light --hide=menu,trig-mode --color=trace:green,channels:green
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="capturing-a-screen-image">
+<h2>Capturing A Screen Image<a class="headerlink" href="#capturing-a-screen-image" title="Permalink to this headline">¶</a></h2>
+<p>The 93xx series scopes provide a wide range of methods for saving data. The
+only commonly available method on all scopes is to use the serial or GPIB
+ports. With a suitable cable you can connect to the scope under Windows using
+the <a class="reference external" href="http://www.lecroy.com/support/softwaredownload/scopeexplorer.aspx">ScopeExplorer</a>
+utility. On other platforms you will need to send the <tt class="docutils literal"><span class="pre">SCDP</span></tt> command and
+process the data transmitted by by the scope.</p>
+<p>If a floppy drive is installed and working it is another avenue for saving
+images captured on the scope.</p>
+<p>The front panel PCCard slot only handles SRAM cards which are not well
+supported with modern operating systems. However, if you have the type-3 hard
+drive option on the back, you can use a more modern CF card with an adapter to
+capture data to flash memory.</p>
+<p>To capture an image of the screen you need to select the desired output. Press
+the &#8220;Utilities&#8221; button, then select &#8220;Hardcopy Setup&#8221;. From there select an
+output destination. If you are using GPIB or the serial port you will need to
+configure parameters under &#8220;GPIB/RS232 Setup&#8221;.</p>
+<p>Once the output destination is set, you can capture an image by pressing the
+&#8220;Screen Dump&#8221; button on the front panel.</p>
+</div>
+<div class="section" id="licensing">
+<h2>Licensing<a class="headerlink" href="#licensing" title="Permalink to this headline">¶</a></h2>
+<p>This program is licensed for free commercial and non-commercial use under the terms of the MIT license.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="#">
+              <img class="logo" src="_static/lecroy_colorizer_logo.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="#">LeCroy Colorizer</a></h1>
+
+
+
+<p class="blurb">LeCroy Colorizer</p>
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=kevinpt&repo=lecroy_colorizer&type=watch&count=true&size=large"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">LeCroy 93xx colorizer</a><ul>
+<li><a class="reference internal" href="#features">Features</a></li>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#download">Download</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#using-lecroy-colorizer">Using LeCroy Colorizer</a><ul>
+<li><a class="reference internal" href="#trace-reconstruction">Trace Reconstruction</a></li>
+<li><a class="reference internal" href="#hiding-regions">Hiding regions</a></li>
+<li><a class="reference internal" href="#overriding-colors">Overriding colors</a></li>
+<li><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#capturing-a-screen-image">Capturing A Screen Image</a></li>
+<li><a class="reference internal" href="#licensing">Licensing</a></li>
+</ul>
+</li>
+</ul>
+<h3>Other projects</h3>
+<p>
+<a href="http://kevinpt.github.io/opbasm/">opbasm</a><br>
+<a href="http://code.google.com/p/ripyl">ripyl</a><br>
+<a href="http://code.google.com/p/vertcl">vertcl</a><br>
+<a href="http://code.google.com/p/vhdl-extras">vhdl-extras</a><br>
+<a href="http://kevinpt.github.io/lecroy-colorizer">lecroy-colorizer</a>
+</p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Kevin Thibedeau.
+      
+      |
+      <a href="_sources/index.txt"
+          rel="nofollow">Page source</a></li>
+    </div>
+
+    
+
+    
+  </body>
+</html>
