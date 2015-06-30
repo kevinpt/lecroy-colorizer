@@ -69,7 +69,6 @@ Sample-Rate          Sample rate in lower right corner
 Trig-Mode            Trigger mode
 ===================  =========================
 
-
 .. image:: images/regions_single.png
 
 Special mode colors
@@ -83,7 +82,6 @@ Parameters       Parameter values in parameter grid mode
 Parameters-Span  Bar over top of parameter mode grid showing span for measurements
 XY-Cursors       XY cursor values in top left of XY grid modes
 ===============  ===================================================================
-
 
 
 ===================================  ================================
