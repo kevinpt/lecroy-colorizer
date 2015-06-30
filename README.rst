@@ -18,7 +18,7 @@ Features
 ================================================================================  ==============================================================================
 Original                                                                          Colorized
 ================================================================================  ==============================================================================
-.. image::  http://kevinpt.github.io/lecroy-colorizer/_static/example_single.png  .. image::  http://kevinpt.github.io/lecroy-colorizer/_static/color_single.png
+.. image::  http://kevinpt.github.io/lecroy-colorizer/_images/example_single.png  .. image::  http://kevinpt.github.io/lecroy-colorizer/_images/color_single.png
 ================================================================================  ==============================================================================
 
 Requirements
