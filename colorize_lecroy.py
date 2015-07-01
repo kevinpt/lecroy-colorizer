@@ -340,7 +340,10 @@ class ColorizerSettings(object):
         
     def get_settings(self, setting_file):
         '''Read the settings from a file into a plain dict'''
-        parser = SafeConfigParser()
+        if sys.version_info.major < 3:
+          parser = SafeConfigParser()
+        else:
+          parser = SafeConfigParser(inline_comment_prefixes=(';',))
         
         try:
             parser.read(setting_file)
