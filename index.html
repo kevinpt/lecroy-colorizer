@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -6,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>LeCroy 93xx Colorizer &mdash; LeCroy Colorizer 1.2 documentation</title>
+    <title>LeCroy 93xx Colorizer &mdash; LeCroy Colorizer 1.3 documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.2',
+        VERSION:     '1.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -38,7 +39,10 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li><a href="#">LeCroy Colorizer 1.2 documentation</a> &raquo;</li> 
+        <li class="right" >
+          <a href="settings.html" title="Using settings files"
+             accesskey="N">next</a> |</li>
+        <li><a href="#">LeCroy Colorizer 1.3 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -49,6 +53,8 @@
             
   <div class="section" id="lecroy-93xx-colorizer">
 <h1>LeCroy 93xx Colorizer<a class="headerlink" href="#lecroy-93xx-colorizer" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
 <p>LeCroy Colorizer is a command line utility to add color to the black and white
 images produced by the screen capture on the LeCroy 93xx series oscilloscopes.
 It should run without issue on all platforms that support Python and PIL.</p>
@@ -188,6 +194,19 @@ the <tt class="docutils literal"><span class="pre">menu</span></tt> and <tt clas
 &gt; colorize_lecroy -i wave2.bmp -s light --hide=menu,trig-mode --color=trace:green,channels:green
 </pre></div>
 </div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="50%" />
+<col width="50%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><img alt="_images/blue_trace.png" class="first last" src="_images/blue_trace.png" />
+</td>
+<td><img alt="_images/green_trace.png" class="first last" src="_images/green_trace.png" />
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="section" id="capturing-a-screen-image">
@@ -241,6 +260,9 @@ configure parameters under &#8220;GPIB/RS232 Setup&#8221;.</p>
 
 
 
+  <h4>Next topic</h4>
+  <p class="topless"><a href="settings.html"
+                        title="next chapter">Using settings files</a></p>
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">LeCroy 93xx Colorizer</a><ul>
@@ -268,6 +290,7 @@ configure parameters under &#8220;GPIB/RS232 Setup&#8221;.</p>
 <a href="http://code.google.com/p/vhdl-extras">vhdl-extras</a><br>
 
 </p>
+
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -285,6 +308,7 @@ configure parameters under &#8220;GPIB/RS232 Setup&#8221;.</p>
       </div>
       <div class="clearer"></div>
     </div>
+
     <div class="footer">
       &copy;2015, Kevin Thibedeau.
       
@@ -296,5 +320,18 @@ configure parameters under &#8220;GPIB/RS232 Setup&#8221;.</p>
     
 
     
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-33828262-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
   </body>
 </html>
