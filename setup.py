@@ -3,8 +3,8 @@ use_setuptools()
 
 from setuptools import setup
 
-# use README.txt for the long description
-with open('README.txt') as fh:
+# use README.rst for the long description
+with open('README.rst') as fh:
     long_description = fh.read()
     
 # scan the script for the version string
@@ -27,14 +27,16 @@ setup(name='lecroy-colorizer',
     download_url='http://code.google.com/p/lecroy-colorizer/downloads/list',
     description='A utility to colorize black and white screen captures from LeCroy 93xx series oscilloscopes',
     long_description=long_description,
-    install_requires = ['PIL >= 1.1.6'],
+    install_requires = ['pillow >= 2.8.0'],
     packages = ['data', 'styles'],
     py_modules = ['colorize_lecroy'],
     entry_points = {
         'console_scripts': ['colorize_lecroy = colorize_lecroy:main']
     },
     include_package_data = True,
-
+    
+    use_2to3 = True,
+    
     keywords='LeCroy oscilloscope',
     license='MIT',
     classifiers=['Development Status :: 5 - Production/Stable',
@@ -42,6 +44,7 @@ setup(name='lecroy-colorizer',
         'Intended Audience :: Science/Research',
         'Natural Language :: English',
         'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
         'Topic :: Scientific/Engineering :: Visualization',
         'Topic :: Utilities'

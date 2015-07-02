@@ -7,6 +7,13 @@
 LeCroy 93xx Colorizer
 =====================
 
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+
+   settings
+
+
 LeCroy Colorizer is a command line utility to add color to the black and white
 images produced by the screen capture on the LeCroy 93xx series oscilloscopes.
 It should run without issue on all platforms that support Python and PIL.
@@ -140,6 +147,9 @@ Consider that you want to prepare two screen captures for publication using the 
   > colorize_lecroy -i wave1.bmp -s light --hide=menu,trig-mode
   > colorize_lecroy -i wave2.bmp -s light --hide=menu,trig-mode --color=trace:green,channels:green
 
+=======================================  =======================================
+.. image:: images/blue_trace.png         .. image:: images/green_trace.png
+=======================================  =======================================
 
 Capturing A Screen Image
 ------------------------
