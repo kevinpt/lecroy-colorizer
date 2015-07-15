@@ -1,8 +1,3 @@
-.. Lecroy Colorizer documentation master file, created by
-   sphinx-quickstart on Sun Aug 05 15:33:06 2012.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 =====================
 LeCroy 93xx Colorizer
 =====================
@@ -27,8 +22,8 @@ Features
 
 Requirements
 ------------
-* Python 2.6 or newer. Not tested under Python 3 due to lack of PIL support
-* `Python Imaging Library (PIL) <http://www.pythonware.com/products/pil>`_
+* Python 2.6 or 3.x.
+* `Pillow library <https://python-pillow.github.io/>`_
 
 The installation script depends on setuptools which will be installed if it isn't currently present in your Python distribution.
 
@@ -59,7 +54,7 @@ Using LeCroy Colorizer
 ----------------------
 The simplest way to run the colorizer is to supply the input file name:
 
-.. parsed-literal::
+.. code-block:: sh
 
   > colorize_lecroy -i <input>
 
@@ -77,7 +72,7 @@ If you want to control the output file name and format, specify it with the ``-o
 
 You can use alternate predefined color styles or supply your own color definitions in a settings file passed with the ``-s`` switch:
 
-.. parsed-literal::
+.. code-block:: sh
 
   > colorize_lecroy -i captured_image.bmp -o colorized_image.png -s my_colors.cfg
 
@@ -116,7 +111,7 @@ Hiding regions
 The ``--hide`` option is used to supply a list of region names that will be hidden.
 Multiple regions can be specified by separating them with a comma:
 
-.. parsed-literal::
+.. code-block:: sh
 
   > colorize_lecroy -i foo.bmp -s analog --hide=menu,time,trig-mode
 
@@ -131,7 +126,7 @@ The ``--color`` option is used to supply a list of colors that will override tho
 
 Simulating a transparent grid overlay:
 
-.. parsed-literal::
+.. code-block:: sh
 
   > colorize_lecroy -i foo.bmp --color="grid:#333,trace:hsl(30,100%,50%),trace-reconstruction:hsl(30,80%,40%)"
 
@@ -142,7 +137,7 @@ Example
 
 Consider that you want to prepare two screen captures for publication using the "light" style. To distinguish the images it would help to change the color of the traces. To remove visual clutter the menu and trigger mode will be hidden. Use the following to accomplish this goal:
 
-.. parsed-literal::
+.. code-block:: sh
 
   > colorize_lecroy -i wave1.bmp -s light --hide=menu,trig-mode
   > colorize_lecroy -i wave2.bmp -s light --hide=menu,trig-mode --color=trace:green,channels:green

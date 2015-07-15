@@ -1,4 +1,3 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -11,7 +10,7 @@
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="_static/project.css" type="text/css" />
+    <link rel="stylesheet" href="https://kevinpt.github.io/opbasm/_static/project.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
@@ -70,8 +69,8 @@ It should run without issue on all platforms that support Python and PIL.</p>
 <div class="section" id="requirements">
 <h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
-<li>Python 2.6 or newer. Not tested under Python 3 due to lack of PIL support</li>
-<li><a class="reference external" href="http://www.pythonware.com/products/pil">Python Imaging Library (PIL)</a></li>
+<li>Python 2.6 or 3.x.</li>
+<li><a class="reference external" href="https://python-pillow.github.io/">Pillow library</a></li>
 </ul>
 <p>The installation script depends on setuptools which will be installed if it isn&#8217;t currently present in your Python distribution.</p>
 </div>
@@ -96,7 +95,7 @@ misbehaves slightly by printing &#8220;Aborted&#8221; when the program ends.</p>
 <div class="section" id="using-lecroy-colorizer">
 <h2>Using LeCroy Colorizer<a class="headerlink" href="#using-lecroy-colorizer" title="Permalink to this headline">¶</a></h2>
 <p>The simplest way to run the colorizer is to supply the input file name:</p>
-<div class="highlight-python"><div class="highlight"><pre>&gt; colorize_lecroy -i &lt;input&gt;
+<div class="highlight-sh"><div class="highlight"><pre>&gt; colorize_lecroy -i &lt;input&gt;
 </pre></div>
 </div>
 <p>This will produce a color output image named <tt class="docutils literal"><span class="pre">color_&lt;input&gt;.png</span></tt> using the default color style.</p>
@@ -120,7 +119,7 @@ misbehaves slightly by printing &#8220;Aborted&#8221; when the program ends.</p>
 </table>
 <p>If you want to control the output file name and format, specify it with the <tt class="docutils literal"><span class="pre">-o</span> <span class="pre">&lt;output&gt;</span></tt> switch.</p>
 <p>You can use alternate predefined color styles or supply your own color definitions in a settings file passed with the <tt class="docutils literal"><span class="pre">-s</span></tt> switch:</p>
-<div class="highlight-python"><div class="highlight"><pre>&gt; colorize_lecroy -i captured_image.bmp -o colorized_image.png -s my_colors.cfg
+<div class="highlight-sh"><div class="highlight"><pre>&gt; colorize_lecroy -i captured_image.bmp -o colorized_image.png -s my_colors.cfg
 </pre></div>
 </div>
 <p>See <a class="reference internal" href="settings.html"><em>Using settings files</em></a> for more information on how to define your own styles.</p>
@@ -171,7 +170,7 @@ disable the reconstruction and show the grids overlaid on top of the traces.</p>
 <h3>Hiding regions<a class="headerlink" href="#hiding-regions" title="Permalink to this headline">¶</a></h3>
 <p>The <tt class="docutils literal"><span class="pre">--hide</span></tt> option is used to supply a list of region names that will be hidden.
 Multiple regions can be specified by separating them with a comma:</p>
-<div class="highlight-python"><div class="highlight"><pre>&gt; colorize_lecroy -i foo.bmp -s analog --hide=menu,time,trig-mode
+<div class="highlight-sh"><div class="highlight"><pre>&gt; colorize_lecroy -i foo.bmp -s analog --hide<span class="o">=</span>menu,time,trig-mode
 </pre></div>
 </div>
 <p>Any region defined in a style file can be hidden. They are treated as case insensitive
@@ -182,7 +181,7 @@ the <tt class="docutils literal"><span class="pre">menu</span></tt> and <tt clas
 <h3>Overriding colors<a class="headerlink" href="#overriding-colors" title="Permalink to this headline">¶</a></h3>
 <p>The <tt class="docutils literal"><span class="pre">--color</span></tt> option is used to supply a list of colors that will override those from the currently active style. This allows you to make color modifications without needing to create a new style definition. The argument is supplied as a comma separated list of <tt class="docutils literal"><span class="pre">&lt;name&gt;:&lt;color&gt;</span></tt> pairs where <tt class="docutils literal"><span class="pre">&lt;name&gt;</span></tt> is a defined region and <tt class="docutils literal"><span class="pre">&lt;color&gt;</span></tt> is one of the supported <a class="reference internal" href="settings.html#colors"><em>color specifiers</em></a>.</p>
 <p>Simulating a transparent grid overlay:</p>
-<div class="highlight-python"><div class="highlight"><pre>&gt; colorize_lecroy -i foo.bmp --color=&quot;grid:#333,trace:hsl(30,100%,50%),trace-reconstruction:hsl(30,80%,40%)&quot;
+<div class="highlight-sh"><div class="highlight"><pre>&gt; colorize_lecroy -i foo.bmp --color<span class="o">=</span><span class="s2">&quot;grid:#333,trace:hsl(30,100%,50%),trace-reconstruction:hsl(30,80%,40%)&quot;</span>
 </pre></div>
 </div>
 <img alt="_images/color_override_sm.png" src="_images/color_override_sm.png" />
@@ -190,8 +189,8 @@ the <tt class="docutils literal"><span class="pre">menu</span></tt> and <tt clas
 <div class="section" id="example">
 <h3>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h3>
 <p>Consider that you want to prepare two screen captures for publication using the &#8220;light&#8221; style. To distinguish the images it would help to change the color of the traces. To remove visual clutter the menu and trigger mode will be hidden. Use the following to accomplish this goal:</p>
-<div class="highlight-python"><div class="highlight"><pre>&gt; colorize_lecroy -i wave1.bmp -s light --hide=menu,trig-mode
-&gt; colorize_lecroy -i wave2.bmp -s light --hide=menu,trig-mode --color=trace:green,channels:green
+<div class="highlight-sh"><div class="highlight"><pre>&gt; colorize_lecroy -i wave1.bmp -s light --hide<span class="o">=</span>menu,trig-mode
+&gt; colorize_lecroy -i wave2.bmp -s light --hide<span class="o">=</span>menu,trig-mode --color<span class="o">=</span>trace:green,channels:green
 </pre></div>
 </div>
 <table border="1" class="docutils">
@@ -283,14 +282,68 @@ configure parameters under &#8220;GPIB/RS232 Setup&#8221;.</p>
 </li>
 </ul>
 <h3>Other projects</h3>
+
+<div id="proj_list">
 <p>
-<a href="http://kevinpt.github.io/opbasm/">opbasm</a><br>
-<a href="http://code.google.com/p/ripyl">ripyl</a><br>
-<a href="http://code.google.com/p/vertcl">vertcl</a><br>
-<a href="http://code.google.com/p/vhdl-extras">vhdl-extras</a><br>
+<a href="http://kevinpt.github.io/opbasm/">Opbasm</a><br>
+<a href="http://kevinpt.github.io/ripyl/">Ripyl</a><br>
+<a href="http://code.google.com/p/vertcl">Vertcl</a><br>
+<a href="http://code.google.com/p/vhdl-extras">Vhdl-extras</a><br>
 
 </p>
+</div>
 
+<script>
+$(function() { // Retrieve list of repositories from Github and dynamically insert them into sidebar
+
+if(!window.sessionStorage || !JSON) { return; } // Punt on crusty browsers (looking at you IE10)
+
+function JSONP( url, callback ) {
+	var id = ( 'jsonp' + Math.random() * new Date() ).replace('.', '');
+	var script = document.createElement('script');
+	script.src = url.replace( 'callback=?', 'callback=' + id );
+	document.body.appendChild( script );
+	window[ id ] = function( data ) {
+		if (callback) {
+			callback( data );
+		}
+	};
+}
+
+function insert_projects(projects) {
+    var links = [];
+    var cur_proj = "LeCroy Colorizer".toLowerCase();
+    $.each(projects, function(key, value) {
+      if(key != cur_proj) {
+        var title = key.replace(/^./, function(match) {return match.toUpperCase()}); // Capitalize first char
+        links.push("<a href='"+ value +"'>" + title + "</a>");
+      }
+    });
+    
+    $("#proj_list").html("<p>"+ links.join("<br>") +"</p>");
+}
+
+var now = new Date().getTime();
+if(sessionStorage.KTcacheTime && now - sessionStorage.KTcacheTime < 5*60*1000 ) { // Use cached values (5 min. expiry)
+  insert_projects(JSON.parse(sessionStorage.KTprojects));
+} else { // Retrieve current projects
+  JSONP("https://api.github.com/users/kevinpt/repos?type=owner&callback=?", function(response) {
+    var projects = {};
+    $.each(response.data, function(index, value) {
+      projects[value.name] = value.homepage;
+    });
+    
+    insert_projects(projects);
+    
+    // Store data in session cache
+    sessionStorage.KTprojects = JSON.stringify(projects);
+    var now = new Date().getTime();
+    sessionStorage.KTcacheTime = now;
+  });  
+}
+
+});
+</script>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -331,7 +384,6 @@ configure parameters under &#8220;GPIB/RS232 Setup&#8221;.</p>
   ga('send', 'pageview');
 
 </script>
-
 
   </body>
 </html>
